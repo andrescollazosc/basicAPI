@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BasicApi.Data.DataAccess.Repositories
 {
-    public class BookRepository : IGenericRepository<Book>
+    public class BookRepository : IBookRepository
     {
         #region Attributes
         private readonly ApplicationDbContext _context;
@@ -54,6 +54,13 @@ namespace BasicApi.Data.DataAccess.Repositories
         public async Task<IEnumerable<Book>> GetAllAsync()
         {
             var resultSearch = await _context.Books.Where(book => book.Active).ToListAsync();
+
+            return resultSearch;
+        }
+
+        public async Task<IEnumerable<Book>> GetAllByAuthorIdAsync(int authorId)
+        {
+            var resultSearch = await _context.Books.Where(book => book.Active && book.AuthorId == authorId).ToListAsync();
 
             return resultSearch;
         }

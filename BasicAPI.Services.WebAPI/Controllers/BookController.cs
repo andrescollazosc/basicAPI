@@ -15,13 +15,13 @@ namespace BasicAPI.Services.WebAPI.Controllers
     public class BookController : ControllerBase
     {
         #region Attributes
-        private readonly IGenericRepository<Book> _bookRepository;
+        private readonly IBookRepository _bookRepository;
         private readonly IGenericRepository<Author> _authorRepository;
         private readonly IMapper _mapper;
         #endregion
 
         #region Constructors
-        public BookController(IGenericRepository<Book> bookRepository, IGenericRepository<Author> authorRepository, IMapper mapper)
+        public BookController(IBookRepository bookRepository, IGenericRepository<Author> authorRepository, IMapper mapper)
         {
             this._bookRepository = bookRepository;
             this._authorRepository = authorRepository;
@@ -91,6 +91,29 @@ namespace BasicAPI.Services.WebAPI.Controllers
                 return _mapper.Map<BookDTO>(result);
             }
             catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpDelete("remove")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> Delete(int id)
+        {
+            try
+            {
+                var result = await _bookRepository.DeleteAsync(id);
+
+                if (!result)
+                {
+                    return BadRequest();
+                }
+
+                return NoContent();
+            }
+            catch (System.Exception)
             {
                 return BadRequest();
             }

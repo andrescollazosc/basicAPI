@@ -10,7 +10,7 @@ namespace BasicAPI.Services.WebAPI.Extenssions
         public static void ConfigureDependencies(this IServiceCollection services)
         {
             services.AddScoped<IGenericRepository<Author>, AuthorRepository>();
-            services.AddScoped<IGenericRepository<Book>, BookRepository>();
+            services.AddScoped<IBookRepository, BookRepository>();
         }
     }
 }
