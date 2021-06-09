@@ -8,32 +8,30 @@ using System.Threading.Tasks;
 
 namespace BasicApi.Data.DataAccess.Repositories
 {
-    public class AuthorRepository : IGenericRepository<Author>
+    public class BookRepository : IGenericRepository<Book>
     {
         #region Attributes
         private readonly ApplicationDbContext _context;
         #endregion
 
         #region Constructors
-        public AuthorRepository(ApplicationDbContext context)
+        public BookRepository(ApplicationDbContext context)
         {
             this._context = context;
         }
         #endregion
 
         #region Public methods
-        public async Task<Author> AddAsync(Author entity)
-        {
+        public async Task<Book> AddAsync(Book entity) {
             entity.Active = true;
-            _context.Authors.Add(entity);
+            _context.Books.Add(entity);
 
-            try
-            {
+            try {
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
             {
-                return new Author();
+                return new Book();
             }
 
             return entity;
@@ -41,39 +39,36 @@ namespace BasicApi.Data.DataAccess.Repositories
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var authorDB = await _context.Authors.FirstOrDefaultAsync(author => author.Id == id);
-            authorDB.Active = false;
+            var bookDB = await _context.Books.FirstOrDefaultAsync(book => book.Active && book.Id == id);
+            bookDB.Active = false;
 
             try
             {
                 return await _context.SaveChangesAsync() > 0 ? true : false;
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 return false;
             }
         }
 
-        public async Task<IEnumerable<Author>> GetAllAsync()
+        public async Task<IEnumerable<Book>> GetAllAsync()
         {
-            var authorsDB = await _context.Authors.Where(author => author.Active).ToListAsync();
+            var resultSearch = await _context.Books.Where(book => book.Active).ToListAsync();
 
-            return authorsDB;
+            return resultSearch;
         }
 
-        public async Task<Author> GetByIdAsync(int id)
+        public async Task<Book> GetByIdAsync(int id)
         {
-            var authorDB = await _context.Authors.FirstOrDefaultAsync(author => author.Id == id && author.Active);
+            var resultSearch = await _context.Books.FirstOrDefaultAsync(book => book.Active && book.Id == id);
 
-            return authorDB;
+            return resultSearch;
         }
 
-        public async Task<bool> UpdateAsync(Author entity)
+        public async Task<bool> UpdateAsync(Book entity)
         {
-            var authorDB = await _context.Authors.FirstOrDefaultAsync(author => author.Id == entity.Id && author.Active);
-            authorDB.Passport = entity.Passport;
-            authorDB.FirstName = entity.FirstName;
-            authorDB.LasttName = entity.LasttName;
+            var bookDB = await _context.Books.FirstOrDefaultAsync(book => book.Active && book.Id == entity.Id);
+            bookDB.Name = entity.Name;
 
             try
             {

@@ -10,6 +10,8 @@ namespace BasicAPI.Services.WebAPI.Profiles
         {
             CreateMap<AuthorDTO, Author>().ReverseMap();
             CreateMap<AuthorCreateDTO, Author>().ReverseMap();
+            CreateMap<BookDTO, Book>().ReverseMap();
+            CreateMap<BookCreatedDTO, Book>().ReverseMap();
         }
     }
 }
