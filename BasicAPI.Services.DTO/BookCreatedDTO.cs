@@ -12,6 +12,7 @@ namespace BasicAPI.Services.DTO
 
         public DateTime PublishDate { get; set; }
 
+        [Required(ErrorMessage = "The field (AuthorId) is Required.")]
         public int AuthorId { get; set; }
     }
 }
