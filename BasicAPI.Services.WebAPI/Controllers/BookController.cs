@@ -48,6 +48,23 @@ namespace BasicAPI.Services.WebAPI.Controllers
             }
         }
 
+        [HttpGet("books/{authorId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<IEnumerable<BookDTO>>> GetAllByAuthorId(int authorId)
+        {
+            try
+            {
+                var result = await _bookRepository.GetAllByAuthorIdAsync(authorId);
+
+                return _mapper.Map<List<BookDTO>>(result);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpGet("book/{id:int}")]
         [HttpGet("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
