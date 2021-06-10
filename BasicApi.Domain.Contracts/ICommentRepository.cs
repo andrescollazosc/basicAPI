@@ -9,6 +9,8 @@ namespace BasicApi.Domain.Contracts
         Task<IEnumerable<Comment>> GetAllAsync();
         Task<IEnumerable<Comment>> GetByBookIdAsync(int bookId);
         Task<Comment> GetByIdAsync(int id);
-        Task<Comment> AddAsync(Comment entity);
+        Task<Comment> AddAsync(Comment entity); 
+        Task<bool> UpdateAsync(Comment entity);
+        
     }
 }

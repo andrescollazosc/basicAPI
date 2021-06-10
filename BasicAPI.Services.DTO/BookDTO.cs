@@ -13,7 +13,7 @@ namespace BasicAPI.Services.DTO
 
         //public int AuthorId { get; set; }
 
-        public List<AuthorDTO> Authors { get; set; }
+        
 
         //public List<CommentDto> Comments { get; set; }
     }

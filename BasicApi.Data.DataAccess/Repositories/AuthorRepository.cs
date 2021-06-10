@@ -72,7 +72,9 @@ namespace BasicApi.Data.DataAccess.Repositories
 
         public async Task<Author> GetByIdAsync(int id)
         {
-            var authorDB = await _context.Authors.FirstOrDefaultAsync(author => author.Id == id && author.Active);
+            var authorDB = await _context.Authors.Include(authorDB => authorDB.AuthorsBooks)
+                .ThenInclude(authorsBooksDB => authorsBooksDB.Book)
+                .FirstOrDefaultAsync(author => author.Id == id && author.Active);
 
             return authorDB;
         }
@@ -88,7 +90,7 @@ namespace BasicApi.Data.DataAccess.Repositories
             {
                 return await _context.SaveChangesAsync() > 0 ? true : false;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }

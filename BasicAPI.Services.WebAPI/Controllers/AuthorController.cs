@@ -48,7 +48,7 @@ namespace BasicAPI.Services.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<AuthorDTO>> GetById(int id)
+        public async Task<ActionResult<AuthorDTOWithBooks>> GetById(int id)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace BasicAPI.Services.WebAPI.Controllers
                     return NotFound();
                 }
 
-                return _mapper.Map<AuthorDTO>(author);
+                return _mapper.Map<AuthorDTOWithBooks>(author);
             }
             catch (System.Exception)
             {
@@ -83,6 +83,34 @@ namespace BasicAPI.Services.WebAPI.Controllers
                 return _mapper.Map<AuthorDTO>(author);
             }
             catch (System.Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPut("update/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<AuthorDTO>> Put(AuthorCreateDTO authorCreateDTO, int id)
+        {
+            try
+            {
+                var exits = await _authorRepository.GetByIdAsync(id);
+
+                if (exits is null)
+                {
+                    return NotFound();
+                }
+
+                var author = _mapper.Map<Author>(authorCreateDTO);
+                author.Id = id;
+
+                await _authorRepository.UpdateAsync(author);
+
+                return NoContent();
+
+            }
+            catch (System.Exception ex)
             {
                 return BadRequest();
             }

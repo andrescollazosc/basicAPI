@@ -58,6 +58,21 @@ namespace BasicApi.Data.DataAccess.Repositories
 
             return result;
         }
+
+        public async Task<bool> UpdateAsync(Comment entity)
+        {
+            var commentDB = await _context.Comments.FirstOrDefaultAsync(comment => comment.Id == entity.Id && comment.Active);
+            commentDB.Description = entity.Description;
+
+            try
+            {
+                return await _context.SaveChangesAsync() > 0 ? true : false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
         #endregion
     }
 }

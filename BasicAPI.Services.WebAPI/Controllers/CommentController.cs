@@ -2,6 +2,7 @@
 using BasicApi.Domain.Contracts;
 using BasicApi.Domain.Entities;
 using BasicAPI.Services.DTO;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -45,8 +46,21 @@ namespace BasicAPI.Services.WebAPI.Controllers
             return _mapper.Map<List<CommentDto>>(comments);
         }
 
+        [HttpGet("{id:int}", Name = "GetComment")]
+        public async Task<ActionResult<CommentDto>> GetById(int id)
+        {
+            var comment = await _commentRepository.GetByIdAsync(id);
+
+            if (comment is null)
+            {
+                return NotFound();
+            }
+
+            return _mapper.Map<CommentDto>(comment);
+        }
+
         [HttpPost]
-        public async Task<ActionResult> Post(int bookId, CommentCreateDTO commentCreateDTO)
+        public async Task<ActionResult<CommentDto>> Post(int bookId, CommentCreateDTO commentCreateDTO)
         {
             var exitsBook = await _bookRepository.GetByIdAsync(bookId);
 
@@ -58,9 +72,46 @@ namespace BasicAPI.Services.WebAPI.Controllers
             var comment = _mapper.Map<Comment>(commentCreateDTO);
             comment.BookId = bookId;
 
-            await _commentRepository.AddAsync(comment);
+            var result = await _commentRepository.AddAsync(comment);
+            var commenDTO = _mapper.Map<CommentDto>(result);
 
-            return Ok();
+            return CreatedAtRoute("GetComment", new { id = comment.Id, bookId = bookId }, commenDTO);
+        }
+
+        [HttpPut("update/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> Put(int bookId, int id, CommentCreateDTO commentCreateDTO)
+        {
+            try
+            {
+                var exitsBook = await _bookRepository.GetByIdAsync(bookId);
+
+                if (exitsBook is null)
+                {
+                    return NotFound();
+                }
+
+                var exits = await _commentRepository.GetByIdAsync(id);
+
+                if (exits is null)
+                {
+                    return NotFound();
+                }
+
+                var comment = _mapper.Map<Comment>(commentCreateDTO);
+                comment.Id = id;
+                comment.BookId = bookId;
+
+                await _commentRepository.UpdateAsync(comment);
+
+                return NoContent();
+
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest();
+            }
         }
         #endregion
 

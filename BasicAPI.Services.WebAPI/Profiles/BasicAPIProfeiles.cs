@@ -9,18 +9,42 @@ namespace BasicAPI.Services.WebAPI.Profiles
     {
         public BasicAPIProfeiles()
         {
-            CreateMap<AuthorDTO, Author>().ReverseMap();
+            CreateMap<Author, AuthorDTO>();
+            CreateMap<Author, AuthorDTOWithBooks>().
+                ForMember(authorDto => authorDto.Books, options => options.MapFrom(MapAuthorDTOBooks));
             CreateMap<AuthorCreateDTO, Author>().ReverseMap();
 
-            CreateMap<Book, BookDTO>().
+            CreateMap<Book, BookDTO>().ReverseMap();
+            CreateMap<Book, BookDTOWithAuthors>().
                 ForMember(bookDto => bookDto.Authors, options => options.MapFrom(MapBookDtoAuthors));
 
             CreateMap<Book, BookCreatedDTO>().ReverseMap()
                 .ForMember(book => book.AuthorsBooks, options => options.MapFrom(MapAtuthorsBooks));
 
-            CreateMap<CommentCreateDTO, Comment>().ReverseMap();
-            CreateMap<CommentDto, Comment>().ReverseMap();
+            CreateMap<Comment, CommentCreateDTO>().ReverseMap();
+            CreateMap<Comment, CommentDto>().ReverseMap();
         }
+
+        private List<BookDTO> MapAuthorDTOBooks(Author author, AuthorDTO authorDTO)
+        {
+            List<BookDTO> result = new();
+
+            if (author.AuthorsBooks == null)
+            {
+                return result;
+            }
+
+            foreach (var authorBook in author.AuthorsBooks)
+            {
+                result.Add(new() {
+                    Id = authorBook.BookId,
+                    Name = authorBook.Book.Name
+                });
+            }
+
+            return result;
+        }
+
 
         private List<AuthorDTO> MapBookDtoAuthors(Book book, BookDTO bookDTO)
         {

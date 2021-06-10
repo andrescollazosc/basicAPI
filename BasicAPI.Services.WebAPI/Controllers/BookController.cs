@@ -70,7 +70,7 @@ namespace BasicAPI.Services.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<BookDTO>> Get(int id)
+        public async Task<ActionResult<BookDTOWithAuthors>> Get(int id)
         {
             try
             {
@@ -81,7 +81,7 @@ namespace BasicAPI.Services.WebAPI.Controllers
                     return NotFound();
                 }
 
-                return _mapper.Map<BookDTO>(result);
+                return _mapper.Map<BookDTOWithAuthors>(result);
             }
             catch (Exception)
             {
