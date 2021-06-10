@@ -96,15 +96,27 @@ namespace BasicAPI.Services.WebAPI.Controllers
         {
             try
             {
-                var author = await _authorRepository.GetByIdAsync(bookCreatedDTO.AuthorId);
-
-                if (author is null)
+                if (bookCreatedDTO.AuthorsId.Count == 0)
                 {
-                    return BadRequest($"The author with Id: { bookCreatedDTO.AuthorId } was not found.");
+                    return BadRequest("Can't create a book without actors");
                 }
 
-                var result = await _bookRepository.AddAsync(_mapper.Map<Book>(bookCreatedDTO));
+                var authors = await _authorRepository.ValidateEntitiesIdsAsync(bookCreatedDTO.AuthorsId);
 
+                if (authors.Count != bookCreatedDTO.AuthorsId.Count)
+                {
+                    return BadRequest("One on more of authores was not found.");
+                }
+
+                var book = _mapper.Map<Book>(bookCreatedDTO);
+
+                if (book.AuthorsBooks != null) {
+                    for (int i = 0; i < book.AuthorsBooks.Count; i++) {
+                        book.AuthorsBooks[i].Order = i;
+                    }
+                }
+
+                var result = await _bookRepository.AddAsync(book);
                 return _mapper.Map<BookDTO>(result);
             }
             catch (Exception)

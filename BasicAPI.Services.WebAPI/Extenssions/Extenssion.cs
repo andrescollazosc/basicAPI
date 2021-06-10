@@ -11,6 +11,7 @@ namespace BasicAPI.Services.WebAPI.Extenssions
         {
             services.AddScoped<IGenericRepository<Author>, AuthorRepository>();
             services.AddScoped<IBookRepository, BookRepository>();
+            services.AddScoped<ICommentRepository, CommentRepository>();
         }
     }
 }

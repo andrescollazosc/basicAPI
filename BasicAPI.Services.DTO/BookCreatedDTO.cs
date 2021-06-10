@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace BasicAPI.Services.DTO
@@ -13,6 +14,9 @@ namespace BasicAPI.Services.DTO
         public DateTime PublishDate { get; set; }
 
         [Required(ErrorMessage = "The field (AuthorId) is Required.")]
-        public int AuthorId { get; set; }
+        //public int AuthorId { get; set; }
+
+        public List<int> AuthorsId { get; set; }
+
     }
 }

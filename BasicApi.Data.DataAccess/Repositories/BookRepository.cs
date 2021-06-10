@@ -29,7 +29,7 @@ namespace BasicApi.Data.DataAccess.Repositories
             try {
                 await _context.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return new Book();
             }
@@ -67,7 +67,12 @@ namespace BasicApi.Data.DataAccess.Repositories
 
         public async Task<Book> GetByIdAsync(int id)
         {
-            var resultSearch = await _context.Books.FirstOrDefaultAsync(book => book.Active && book.Id == id);
+            var resultSearch = await _context.Books
+                .Include(bookDb => bookDb.AuthorsBooks)
+                .ThenInclude(authorBook => authorBook.Author)
+                .FirstOrDefaultAsync(book => book.Active && book.Id == id);
+
+            resultSearch.AuthorsBooks.OrderBy(x => x.Order).ToList();
 
             return resultSearch;
         }

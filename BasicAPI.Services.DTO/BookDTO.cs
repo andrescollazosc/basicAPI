@@ -1,5 +1,5 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace BasicAPI.Services.DTO
 {
@@ -11,6 +11,10 @@ namespace BasicAPI.Services.DTO
 
         public DateTime PublishDate { get; set; }
 
-        public int AuthorId { get; set; }
+        //public int AuthorId { get; set; }
+
+        public List<AuthorDTO> Authors { get; set; }
+
+        //public List<CommentDto> Comments { get; set; }
     }
 }

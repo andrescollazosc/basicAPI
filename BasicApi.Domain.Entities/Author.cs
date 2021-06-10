@@ -19,5 +19,6 @@ namespace BasicApi.Domain.Entities
         public bool Active { get; set; }
 
         public List<Book> Books { get; set; }
+        public List<AuthorBook> AuthorsBooks { get; set; }
     }
 }

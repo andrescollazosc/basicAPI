@@ -18,6 +18,8 @@ namespace BasicApi.Domain.Entities
         public bool Active { get; set; }
 
         public Author Author { get; set; }
-        public List<Comment>  Comments { get; set; }
+        //public List<Author> Authors { get; set; }
+        public List<Comment> Comments { get; set; }
+        public List<AuthorBook> AuthorsBooks { get; set; }
     }
 }

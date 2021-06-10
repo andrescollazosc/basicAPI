@@ -39,6 +39,15 @@ namespace BasicApi.Data.DataAccess.Repositories
             return entity;
         }
 
+        public async Task<List<int>> ValidateEntitiesIdsAsync(List<int> entitiesIds)
+        {
+            var authorsIds = await _context.Authors.
+                Where(authorDB => entitiesIds.Contains(authorDB.Id)).
+                Select(x => x.Id).ToListAsync();
+
+            return authorsIds;
+        }
+
         public async Task<bool> DeleteAsync(int id)
         {
             var authorDB = await _context.Authors.FirstOrDefaultAsync(author => author.Id == id);
