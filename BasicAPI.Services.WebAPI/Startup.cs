@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 
 namespace BasicAPI.Services.WebAPI
 {
@@ -23,7 +24,9 @@ namespace BasicAPI.Services.WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper(typeof(Startup));
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(
+                x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles).AddNewtonsoftJson();
+
             services.AddDbContext<ApplicationDbContext>(option => {
                 option.UseSqlServer(Configuration.GetConnectionString("defaultConnection"));
             });

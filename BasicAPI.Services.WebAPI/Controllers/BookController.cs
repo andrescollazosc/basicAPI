@@ -3,6 +3,7 @@ using BasicApi.Domain.Contracts;
 using BasicApi.Domain.Entities;
 using BasicAPI.Services.DTO;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -109,12 +110,7 @@ namespace BasicAPI.Services.WebAPI.Controllers
                 }
 
                 var book = _mapper.Map<Book>(bookCreatedDTO);
-
-                if (book.AuthorsBooks != null) {
-                    for (int i = 0; i < book.AuthorsBooks.Count; i++) {
-                        book.AuthorsBooks[i].Order = i;
-                    }
-                }
+                AddOrderToAuthors(book);
 
                 var result = await _bookRepository.AddAsync(book);
                 return _mapper.Map<BookDTO>(result);
@@ -145,6 +141,66 @@ namespace BasicAPI.Services.WebAPI.Controllers
             catch (System.Exception)
             {
                 return BadRequest();
+            }
+        }
+
+        [HttpPut("id:int")]
+        public async Task<ActionResult> Put(int id, BookCreatedDTO bookCreatedDTO) {
+            var bookDb = await _bookRepository.GetByIdAsync(id);
+
+            if (bookDb is null) {
+                return NotFound();
+            }
+
+            bookDb = _mapper.Map(bookCreatedDTO, bookDb);
+            AddOrderToAuthors(bookDb);
+
+            await _bookRepository.UpdateAsync(bookDb);
+
+            return NoContent();
+        }
+
+
+        [HttpPatch("id:int")]
+        public async Task<ActionResult> Patch(int id, JsonPatchDocument<BookPatchDTO> patchDocument)
+        {
+            if (patchDocument == null)
+            {
+                return BadRequest();
+            }
+
+            var bookDb = await _bookRepository.GetByIdAsync(id);
+
+            if (bookDb is null)
+            {
+                return NotFound();
+            }
+
+            var bookDTO = _mapper.Map<BookPatchDTO>(bookDb);
+
+            patchDocument.ApplyTo(bookDTO, ModelState);
+
+            var isValid = TryValidateModel(bookDTO);
+
+            if (!isValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return NoContent();
+        }
+
+        #endregion
+
+        #region Private methods
+        private void AddOrderToAuthors(Book book)
+        {
+            if (book.AuthorsBooks != null)
+            {
+                for (int i = 0; i < book.AuthorsBooks.Count; i++)
+                {
+                    book.AuthorsBooks[i].Order = i;
+                }
             }
         }
         #endregion

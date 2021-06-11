@@ -21,6 +21,8 @@ namespace BasicAPI.Services.WebAPI.Profiles
             CreateMap<Book, BookCreatedDTO>().ReverseMap()
                 .ForMember(book => book.AuthorsBooks, options => options.MapFrom(MapAtuthorsBooks));
 
+            CreateMap<BookPatchDTO, Book>().ReverseMap();
+
             CreateMap<Comment, CommentCreateDTO>().ReverseMap();
             CreateMap<Comment, CommentDto>().ReverseMap();
         }
