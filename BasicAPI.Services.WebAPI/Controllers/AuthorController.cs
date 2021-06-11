@@ -4,6 +4,7 @@ using BasicApi.Domain.Entities;
 using BasicAPI.Services.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -16,17 +17,27 @@ namespace BasicAPI.Services.WebAPI.Controllers
         #region Attributes
         private readonly IGenericRepository<Author> _authorRepository;
         private readonly IMapper _mapper;
+        private readonly IConfiguration configuration;
 
         #endregion
 
         #region Constructors
-        public AuthorController(IGenericRepository<Author> authorRepository, IMapper mapper) {
+        public AuthorController(IGenericRepository<Author> authorRepository, IMapper mapper, 
+            IConfiguration configuration) {
             this._authorRepository = authorRepository;
             this._mapper = mapper;
+            this.configuration = configuration;
         }
         #endregion
 
         #region Actions
+
+        [HttpGet("config")]
+        public ActionResult<string> GetConfig()
+        {
+            return configuration["lastName"];
+        }
+
         [HttpGet("authors")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
